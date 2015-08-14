@@ -1,0 +1,32 @@
+table.sample {
+	border-width: thin;
+	border-spacing: 0px;
+	border-style: outset;
+	border-color: gray;
+	border-collapse: collapse;
+	background-color: rgb(250, 240, 230);
+}
+table.sample th {
+	border-width: thin;
+	margin: 1px;
+    border-style: solid;
+	border-color: black;
+	background-color: silver;
+    text-align: right;
+	height:16px;
+   
+
+}
+table.sample td {
+	border-width: thin;
+	margin: 1 px;
+	border-style: solid;
+	border-color: black;
+	background-color: rgb(223,223,223);
+	height:16px;
+}
+
+.input {
+	margin: 0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+}

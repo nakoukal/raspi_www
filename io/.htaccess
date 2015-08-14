@@ -1,0 +1,6 @@
+AuthUserFile /home/pi/.htpasswd
+AuthGroupFile /dev/null
+AuthName "Soukroma autorizacni stranka"
+AuthType Basic
+
+require valid-user
