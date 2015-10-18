@@ -1,11 +1,13 @@
 <?php
 include_once('../vendor/phpmailer/phpmailer/PHPMailerAutoload.php');
-include_once('../class/class.HTTPAnswer.php');
-include_once('../class/class.GPIO.php');
-include_once('../class/class.MySQL.php');
+include_once('class/class.HTTPAnswer.php');
+include_once('class/class.GPIO.php');
+include_once('class/class.MySQL.php');
 require("globals.php");
 require("function.php");
 $bit = NULL;
+$deviceName = "";
+$oMySQL = "";
 $ip = $_SERVER['REMOTE_ADDR']?:($_SERVER['HTTP_X_FORWARDED_FOR']?:$_SERVER['HTTP_CLIENT_IP']);
 if(isset($_POST["act"]))$act = filter_var($_POST["act"], FILTER_SANITIZE_STRING);
 if(isset($_GET["act"]))$act = filter_var($_GET["act"], FILTER_SANITIZE_STRING);
@@ -18,14 +20,19 @@ if(isset($_GET["dev"]))$deviceName = filter_var($_GET["dev"], FILTER_SANITIZE_ST
 
 $mailSubject="RASPI RELE BIT:$bit  $deviceName";
 $mailBody="<b>Aktivita:</b> RASPI RELE BIT<BR>\n <b>Device:</b> $deviceName <BR>\n <b>Datum:</b> ".date("d.m.Y H:i:s")."<BR>\n <b>BIT :</b> $bit <BR>\n <b>IP:</b> $ip";
-$Gpio = new GPIO();
 $oMySQL = new MySQL('temperature', $GLOBALS["dblogin"], $GLOBALS["dbpwd"], $GLOBALS["dbhost"], 3306);
+$Gpio = new GPIO($oMySQL);
+
 
 switch ($act) {
 default:
 	
 	break;
 
+  case 'readallevents':
+    $Gpio->getAllEventsOnJson();
+  break;
+  
   case 'readall':
     $Gpio->getAllBitsOnJson();
   break;
@@ -51,7 +58,7 @@ default:
 	  addEvent($oMySQL,array('ip'=>$ip,'device'=>$deviceName,'bit'=>$bit,'value'=>1));
     }
         
-    usleep(1000000);
+    usleep(400000);
     
     $Gpio->readBitBy($bit);
     

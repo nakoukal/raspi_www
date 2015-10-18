@@ -18,12 +18,14 @@ class GPIO {
   private $return_value = array();
   private $last_json_result;
   private $direction;
+  private $oMySQL;
   public $value;
   
   
-  function __construct()
+  function __construct($oMySQL)
   {
-    $this->allowed_bits = array(17, 18, 21, 22, 24, 25);  
+    $this->allowed_bits = array(17, 18, 21, 22, 24, 25);
+	$this->oMySQL = $oMySQL;
   }
   
   private function readAllBits()
@@ -89,7 +91,12 @@ class GPIO {
     $this->last_json_result = json_encode($this->return_value);
   }
   
-  
-  
+  public function getAllEventsOnJson()
+  {
+    $this->oMySQL->ExecuteSQL("SELECT timestamp,ip,device,bit,value FROM events ORDER BY timestamp DESC LIMIT 10");
+	$this->return_value['event'] =  $this->oMySQL->arrayedResult;
+    $this->encodeToJson();
+    echo $this->last_json_result; 
+  }
   
 }
