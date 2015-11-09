@@ -93,7 +93,7 @@ class GPIO {
   
   public function getAllEventsOnJson()
   {
-    $this->oMySQL->ExecuteSQL("SELECT DATE_FORMAT(timestamp,'%a-%H:%i:%s') time,ip,device,bit,value FROM events ORDER BY timestamp DESC LIMIT 10");
+    $this->oMySQL->ExecuteSQL("SELECT DATE_FORMAT(timestamp,'%a-%H:%i:%s') time,ip,device,bit,value FROM events ORDER BY timestamp DESC LIMIT 25");
 	$this->return_value['event'] =  $this->oMySQL->arrayedResult;
     $this->encodeToJson();
     echo $this->last_json_result; 
