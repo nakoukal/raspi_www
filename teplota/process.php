@@ -15,6 +15,7 @@ $jsouOut = array();
 
 //Insert temperature into db
 $TempContrl->InsertIntoTemp();
+$TempContrl->InsertIntoTeplota();
 
 //Control thermostat on off
 $jsouOut["heating"] = $TempContrl->Thermostat();
