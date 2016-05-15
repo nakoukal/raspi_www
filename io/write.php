@@ -3,7 +3,7 @@
 //without a bit we can do nothing
 if(isset($_POST["bit"])) {
 	
-	$allowedbits = array(10,11,17, 18, 21, 22, 24, 25);
+	$allowedbits = array(10,11,17, 18, 21, 22, 24, 25, 27);
 	$bit = intval($_POST["bit"]);
 	
 	//only some bits are allowed.

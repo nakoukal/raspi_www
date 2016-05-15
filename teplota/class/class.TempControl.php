@@ -125,7 +125,7 @@ class TempControl {
 			AND TIME(NOW()) BETWEEN TT.TimeFrom AND TT.TimeTo;
 		";
 		$resultArray = $this->oMySQL->ExecuteSQL($sql);
-
+      
 		foreach ($resultArray as $result) {
 			$temp = $result['Temp'];
 			$sensorID = $result['sensorID'];

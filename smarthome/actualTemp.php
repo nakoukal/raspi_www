@@ -1,13 +1,13 @@
 <?php
-include_once('globals.php');
-include_once('class/class.HTTPAnswer.php');
-include_once('class/class.MySQL.php');
+require_once('globals.php');
+require_once('class/class.HTTPAnswer.php');
+require_once('class/class.MySQL.php');
 $HTTPAnswer = new HTTPAnswer();
 $oMySQL = new MySQL('temperature', $dblogin, $dbpwd, $dbhost, 3306);
 
 function getRequiredTemp($oMySQL,$sensorName){
 	$Sql = "SELECT TT.Temp reqTemp FROM sensors S 
-	JOIN time_temp TT ON S.id = TT.SensorID
+	JOIN time_temp TT ON S.sensorID = TT.SensorID
 	WHERE WEEKDAY(NOW())+1 = TT.Day 
 	AND TIME(NOW()) BETWEEN TT.TimeFrom AND TT.TimeTo
 	AND S.name = '$sensorName';";

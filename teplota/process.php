@@ -13,11 +13,18 @@ $TempContrl = new TempControl($temp, $oMySQL,$Mail);
 $jsouOut = array();
 
 
+
+
 //Insert temperature into db
-$TempContrl->InsertIntoTemp();
-$TempContrl->InsertIntoTeplota();
+$res=$TempContrl->InsertIntoTemp();
+$res=$TempContrl->InsertIntoTeplota();
+
+//$res=$TempContrl->Thermostat();
+//echo $res;
+//exit;
 
 //Control thermostat on off
 $jsouOut["heating"] = $TempContrl->Thermostat();
 $jsouOut["solar"] = $TempContrl->Solar();
+
 echo json_encode($jsouOut);

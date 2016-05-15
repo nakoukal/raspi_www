@@ -1,0 +1,67 @@
+/* CSS Document */
+body { 
+    color: Black;
+    background-color: a8d4f2; 
+    padding:10px;
+    height:100%;
+}
+p { 
+    font-family: "Times New Roman";
+    text-align: Justify; 
+    color: Black;
+    font-size: 14pt;
+    padding: 10 10em;
+    
+}
+
+h3 { 
+    font-family: "Times New Roman";
+    text-align: Justify; 
+    color: Black;
+    padding: 10 10em;
+    
+}
+
+
+#header {
+    width:1320px;
+    background-color:08446e;
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+
+#nav {
+    line-height:30px;
+    background-color:2391de;
+    height:100%;
+    width:150px;
+    padding:5px;
+    float:left;
+    text-align:center;
+}
+
+#nav2 {
+    width:810px;
+    float:left;
+    text-align: Justify;
+    height:100%;
+}
+
+#nav3 {
+    line-height:30px;
+    background-color:2391de;
+    height:100%;
+    width:250px;
+    float:left;
+    padding:5px;
+    text-align:center;
+}
+#footer {
+    width:1330px;
+    background-color:08446e;
+    color:white;
+    clear:both;
+    text-align:center;
+    
+}

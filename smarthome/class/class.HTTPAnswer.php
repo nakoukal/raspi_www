@@ -1,4 +1,4 @@
-<?
+<?php
 class HTTPAnswer {  
 	function __construct() {
 		if (!(defined("HTTP_ANSWER_STATUS_200"))) {

@@ -59,3 +59,4 @@ solar=$(echo $response | /usr/bin/jq '.solar');
 
 switch_relay 21 $heating;
 switch_relay 22 $solar;
+
