@@ -28,11 +28,16 @@
   // vykricnik "!" provadi negaci, tj. true prevede na false a false prevede na true
   if (!empty($_REQUEST["id"])) {
     $id = $_REQUEST["id"];
-    smaz($con,"Klient","id_idk=$id");
+    $where = array(
+        "id_idk"=>$id,
+        
+        );
+    
+    smaz($con,"Klient",$where);
   }
   
   if (!empty($_REQUEST["id_idk"])) {
-    $idEdit = $_REQUEST["id_idk"];
+    $idKlient = $_REQUEST["id_idk"];
     $Jmeno = $_REQUEST["JmenoEdit"];
     $Prijmeni = $_REQUEST["PrijmeniEdit"];
     $OP = $_REQUEST["OPEdit"];
@@ -45,30 +50,12 @@
         "Prijmeni"=>$Prijmeni,
         "OP"=>$OP,
         "RP"=>$RP,
-        "Platba"=>$Platba,        
+        "Platba"=>$Platba,
+        "id_ida"=>$id_ida
     );
-    $where = "id_idk = $idEdit";    
+    $where = "id_idk = $idKlient";    
     uprav($con, "Klient", $hodnoty, $where);
-    
-    // vypíše databázovou chybu, pokud k ní došlo
-    $chyba = mysqli_error($con);
-    if ($chyba) {
-      echo "chyba v mysql: $chyba\n<br>";
-    }
   }
-  
-  
-  $result = mysqli_query($con, "SELECT * FROM Klient");
-  
-  /*
-  echo "\n\n<table border = 1>";
-  while ($radek = mysqli_fetch_assoc($result)) {
-     echo "<tr>";
-     echo "<td>".$radek["idUcebna"]."</td> <td>".$radek["nazev"]."</td> <td>".$radek["kapacita"]."</td> <td>".$radek["projektor"]."</td>";
-     echo "</tr>";
-  }
-  echo "</table>\n\n";   
-  */
 ?>
 
 <h3> Vyhledávání </h3>
@@ -84,20 +71,29 @@
 <br>
 
 <?php
-$result = array();
-
   if (empty($_REQUEST["nazevHledej"])) {                 
-      $return = dQuery($con,"Klient");
-      if($return){
-          $result = $return;
-      }      
+      $query = "SELECT  k.id_idk,
+                        k.Jmeno,
+                        k.Prijmeni,
+                        k.OP,
+                        k.RP,
+                        k.Platba,                        
+                        v.SPZ
+                FROM Klient k JOIN Vozidlo v ON k.id_ida = v.id_ida;";
+      $result = eQuery($con,$query);
   }
   else {
     $hledej = $_REQUEST["nazevHledej"];  
-    $return = dQuery($con,"Klient","Prijmeni LIKE '%$hledej%'");
-    if($return){
-        $result = $return;
-    }
+    $query = "SELECT  k.id_idk,
+                        k.Jmeno,
+                        k.Prijmeni,
+                        k.OP,
+                        k.RP,
+                        k.Platba,                        
+                        v.SPZ
+                FROM Klient k JOIN Vozidlo v ON k.id_ida = v.id_ida
+                WHERE k.Prijmeni LIKE '%$hledej%';";
+    $result = eQuery($con,$query);
   }
   
   echo "\n\n<table border = 1>";
@@ -146,11 +142,7 @@ $result = array();
     <td>
       <select name="id_ida">
         <?php
-        $result = array();
-        $return = dQuery($con,"Vozidlo");
-        if($return){
-            $result = $return;
-        }                
+        $result = dQuery($con,"Vozidlo");
         while ($radek = mysqli_fetch_assoc($result)) { ?>
         <option value="<?php echo $radek["id_ida"]; ?>"> <?php echo $radek["SPZ"]; ?> </option>
         <?php } ?>
@@ -174,11 +166,11 @@ $result = array();
 
 <?php
   if (!empty($_REQUEST["idEdit"])) {
-    $idEdit = $_REQUEST['idEdit'];
-    $result = mysqli_query($con, "SELECT * FROM Klient WHERE id_idk = $idEdit");
-    $radek = mysqli_fetch_assoc($result);
+    $idEdit = $_REQUEST['idEdit'];    
     
+    $radek = nacti($con,"Klient","id_idk",$idEdit);
     
+    $id_idk = $radek["id_idk"];
     $Jmeno = $radek["Jmeno"];
     $Prijmeni = $radek["Prijmeni"];
     $OP = $radek["OP"];
@@ -189,7 +181,8 @@ $result = array();
 
 <h3> Editace </h3>
 <form action="klient.php" method="post">
-  <table>
+  <input type="hidden" name="id_idk" value="<?php echo $id_idk; ?>">
+  <table>  
   <tr> 
     <td>Jméno: </td><td><input type="text" name="JmenoEdit" value="<?php echo $Jmeno; ?>"></td>
   </tr>
@@ -208,18 +201,13 @@ $result = array();
   <tr> 
     <td>SPZ vozidla: </td>
   <td>
-    <?php
-      $result = mysqli_query($con, "SELECT * FROM Vozidlo");
-      // vypíše databázovou chybu, pokud k ní došlo
-      $chyba = mysqli_error($con);
-      if ($chyba) {
-        echo "chyba v mysql: $chyba\n<br>";
-      }
-      ?>
-      
-        <select name="id_ida">
-          <?php while ($radek = mysqli_fetch_assoc($result)) { ?>
-          <option value="<?php echo $radek["id_ida"]; ?>" <?php if ($radek["id_ida"] == $id_ida) {  echo 'selected="selected"'; } ?> > <?php echo $radek["SPZ"]; ?> </option>
+    <?php      
+      $result = dQuery($con,"Vozidlo");
+        
+    ?>
+    <select name="id_ida">
+        <?php while ($radek = mysqli_fetch_assoc($result)) { ?>
+            <option value="<?php echo $radek["id_ida"]; ?>" <?php if ($radek["id_ida"] == $id_ida) {  echo 'selected="selected"'; } ?> > <?php echo $radek["SPZ"]; ?> </option>
           <?php } ?>
         </select>
     

@@ -65,3 +65,13 @@ h3 {
     text-align:center;
     
 }
+
+.info {
+    background-color:green;
+    width: 1330px;
+}
+
+.error {
+    background-color:red;
+    width: 1330px;
+}

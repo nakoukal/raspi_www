@@ -18,8 +18,13 @@ if(isset($_GET["value"]))$value = filter_var($_GET["value"], FILTER_SANITIZE_STR
 if(isset($_POST["dev"]))$deviceName = filter_var($_POST["dev"], FILTER_SANITIZE_STRING);
 if(isset($_GET["dev"]))$deviceName = filter_var($_GET["dev"], FILTER_SANITIZE_STRING);
 
+if(isset($_GET["lat"]))$lat = filter_var($_GET["lat"], FILTER_SANITIZE_STRING);
+if(isset($_GET["lng"]))$lng = filter_var($_GET["lng"], FILTER_SANITIZE_STRING);
+if(isset($_GET["name"]))$name = filter_var($_GET["name"], FILTER_SANITIZE_STRING);
+
 $mailSubject="RASPI RELE BIT:$bit  $deviceName";
 $mailBody="<b>Aktivita:</b> RASPI RELE BIT<BR>\n <b>Device:</b> $deviceName <BR>\n <b>Datum:</b> ".date("d.m.Y H:i:s")."<BR>\n <b>BIT :</b> $bit <BR>\n <b>IP:</b> $ip";
+$HTTPAnswer = new HTTPAnswer();
 $oMySQL = new MySQL('temperature', $GLOBALS["dblogin"], $GLOBALS["dbpwd"], $GLOBALS["dbhost"], 3306);
 $Gpio = new GPIO($oMySQL);
 
@@ -28,17 +33,27 @@ switch ($act) {
 default:
 	
 	break;
+	
+  case 'getlocation':    
+    $HTTPAnswer->HTTPAnswer(HTTP_ANSWER_STATUS_200,$Gpio->getLocationOnJson(),true);  
+  break;
 
-  case 'readallevents':
-    $Gpio->getAllEventsOnJson();
+  case 'savelocation':
+	  $Gpio->saveLocation($lat, $lng, $name);
+  break;
+
+
+
+  case 'readallevents':    
+    $HTTPAnswer->HTTPAnswer(HTTP_ANSWER_STATUS_200,$Gpio->getAllEventsOnJson(),true);  
   break;
   
-  case 'readall':
-    $Gpio->getAllBitsOnJson();
+  case 'readall':    
+    $HTTPAnswer->HTTPAnswer(HTTP_ANSWER_STATUS_200,$Gpio->getAllBitsOnJson(),true);  
   break;
   
   case 'readby':
-    $Gpio->getBitByOnJson($bit);  
+    $HTTPAnswer->HTTPAnswer(HTTP_ANSWER_STATUS_200,$Gpio->getBitByOnJson($bit),true);  
   break;
   
   case 'writevalue':
@@ -46,12 +61,12 @@ default:
 	$value = ($Gpio->value==0)?1:0;
 	$Gpio->writeValueByBit($bit,$value);
 	addEvent($oMySQL,array('ip'=>$ip,'device'=>$deviceName,'bit'=>$bit,'value'=>$value));
-	smtpmailer($GLOBALS["email"], $GLOBALS["from"], $GLOBALS["from_name"],$mailSubject,$mailBody);
+    $HTTPAnswer->HTTPAnswer(HTTP_ANSWER_STATUS_200,$Gpio->getAllBitsOnJson(),true);  
+	//smtpmailer($GLOBALS["email"], $GLOBALS["from"], $GLOBALS["from_name"],$mailSubject,$mailBody);
   break;
   
   case 'opengate':
     $Gpio->readBitBy($bit);
-    echo $Gpio->value;
     if($Gpio->value == 0)
     {
       $Gpio->writeValueByBit($bit,1);
@@ -67,7 +82,8 @@ default:
       $Gpio->writeValueByBit($bit,0);
 	  addEvent($oMySQL,array('ip'=>$ip,'device'=>$deviceName,'bit'=>$bit,'value'=>0));
     }
-	smtpmailer($GLOBALS["email"], $GLOBALS["from"], $GLOBALS["from_name"],$mailSubject,$mailBody);
+	$HTTPAnswer->HTTPAnswer(HTTP_ANSWER_STATUS_200,$Gpio->getAllBitsOnJson(),true);
+	//smtpmailer($GLOBALS["email"], $GLOBALS["from"], $GLOBALS["from_name"],$mailSubject,$mailBody);
   break;
 }
 ?>

@@ -48,7 +48,7 @@ class GPIO {
   {
     $this->readAllBits();
     $this->encodeToJson();
-    echo $this->last_json_result; 
+    return $this->last_json_result; 
   }
   
   public function readBitBy($bit)
@@ -68,7 +68,7 @@ class GPIO {
     if($this->readBitBy($bit))
     {
       $this->encodeToJson();
-      echo $this->last_json_result;
+      return $this->last_json_result;
     } 
   }
   
@@ -96,7 +96,25 @@ class GPIO {
     $this->oMySQL->ExecuteSQL("SELECT DATE_FORMAT(timestamp,'%a-%H:%i:%s') time,ip,device,bit,value FROM events ORDER BY timestamp DESC LIMIT 25");
 	$this->return_value['event'] =  $this->oMySQL->arrayedResult;
     $this->encodeToJson();
-    echo $this->last_json_result; 
+    return $this->last_json_result; 
+  }
+  
+  public function getLocationOnJson()
+  {
+	$this->oMySQL->ExecuteSQL("SELECT * FROM gpsgame ORDER BY pos;");
+	$this->return_value['gps'] =  $this->oMySQL->arrayedResult;
+    $this->encodeToJson();
+    return $this->last_json_result;
+  }
+  
+  public function saveLocation($lat,$lng,$name)
+  {
+	  $data = array('lat'=>$lat,
+                  'lon'=>$lng,
+                  'name'=>$name,
+                  'pos'=>'99',
+                  'des'=>'nic');
+	  $this->oMySQL->Insert($data, 'gpsgame');
   }
   
 }

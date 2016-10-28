@@ -55,23 +55,34 @@
 <?php
 }
 // vypíše chybu připojení a vrati false
-function chyba($con) {
+function chyba($con,$message="") {
   $chyba = mysqli_error($con);
   if ($chyba) {
-    echo "chyba v mysql: $chyba\n<br>";
+    echo "<b class='error'>$message chyba v mysql: $chyba\n<br></b>";
     return false;
   }
+  return true;
+}
+
+function info($message)
+{
+    echo "<div class='info'><b> $message </b></div>";
 }
 // nacte radek z tabulky
-function nacti($con,$tabulka, $id) {
-  $result = mysqli_query($con,"SELECT * FROM $tabulka WHERE id= $id");
+function nacti($con,$tabulka, $idName, $idValue) {
+  $query = "SELECT * FROM $tabulka WHERE $idName = '$idValue'";
+  $result = mysqli_query($con,$query);
   
-  if(!chyba($con)){
-    return false;
+  
+  if(!chyba($con,"Funkce nacti query: ")){    
+      return false;
   }
   
-  $radek = mysql_fetch_row($result);
-  if(!chyba($con)){
+  
+  $radek = mysqli_fetch_assoc($result);
+  
+    
+  if(!chyba($con,"Funkce nacti fetch: ")){
       return false;
   }
   
@@ -79,7 +90,8 @@ function nacti($con,$tabulka, $id) {
 }
 
 /**
- * 
+ * Jednoducha funkce na vraceni result z tabulky neni mozno puzit slozitejsi 
+ * sql dotaz
  * @param type $con - identifikator pripojeni k db
  * @param type $tabulka - nazev tabulky 
  * @param type $where - podminka dotazy (slopec = 'dotaz')
@@ -101,19 +113,47 @@ function dQuery($con,$tabulka,$where="",$order=""){
     $query .= ";";
         
     $result = mysqli_query($con, $query);
-    if(chyba($con)){
+    if(!chyba($con)){
+        return false;
+    }    
+    return $result;
+}
+/**
+ * Funkce pro vykonani definovaneho sql dotazu
+ * provede kontrolu na chyby a vrati result
+ * 
+ * @param type $con
+ * @param type $query
+ * @return boolean
+ */
+function eQuery($con,$query)
+{
+    $result = mysqli_query($con, $query);
+    if(!chyba($con)){
         return false;
     }
     return $result;
 }
 
 function smaz($con,$tabulka,$where) {
+    if(sizeof($where)==0)
+        return false;
     //Slozeni sql dotazu podle parametru funkce
-    $query = "DELETE FROM $tabulka WHERE $where";
+    $query = "DELETE FROM $tabulka WHERE ";
+    
+    //sestaveni podminky podle obsahu parametru pole where
+    foreach ($where as $key => $value) {
+        $query .= "$key = '".$value."'";
+        // pridani AND na konec pokud se nejedna o posledni item v poli
+        if( next( $where ) ) {            
+            $query .= " AND ";
+        }        
+    }    
     $result = mysqli_query($con,$query);
-    if(chyba($con)){
+    if(!chyba($con,"Funkce smaz :")){
         return false;
     }
+    info("Zaznam v tabulce $tabulka byl odstranen.");
     return $result;
 }
 
@@ -121,9 +161,10 @@ function vloz($con,$tabulka, $sloupce, $hodnoty) {
     //Slozeni sql dotazu podle parametru funkce
     $query = "INSERT INTO $tabulka ($sloupce) VALUES ($hodnoty);";
     $result = mysqli_query($con,$query);
-    if(chyba($con)){
+    if(!chyba($con)){
         return false;
     }
+    info("Zaznam v tabulce $tabulka byl vytvoren.");
     return $result;
 }
 
@@ -135,14 +176,15 @@ function uprav($con,$tabulka, $hodnoty,$where){
         // pridani carky na konec pokud se nejedna o posledni item v poli
         if( next( $hodnoty ) ) {            
             $query .= " , ";
-        }
-        
+        }        
     }
     
-    $query .= " WHERE $where ;";
+    $query .= " WHERE $where ;";    
+    
     $result = mysqli_query($con,$query);
-    if(chyba($con)){
+    if(!chyba($con)){
         return false;
     }
+    info("Zaznam v tabulce $tabulka byl upraven.");
     return $result;
 }
