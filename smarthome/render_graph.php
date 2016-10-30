@@ -141,4 +141,4 @@ $myPicture->setFontProperties(array("FontName"=>$LibPath."fonts/verdana.ttf","Fo
 $TextSettings = array("Align"=>TEXT_ALIGN_MIDDLEMIDDLE, "R"=>0, "G"=>0, "B"=>0);
 $myPicture->drawText(200,15,$GraphLabel,$TextSettings);
 
-$myPicture->render(__DIR__.'/temp/'.$SensorID.'_'.$Type.'.png');
+$myPicture->render(__DIR__.'/temp/'.$Type.'_'.$SensorID.'.png');
