@@ -62,7 +62,7 @@ class MySQL {
 	
 	// Connects class to database
 	// $persistant (boolean) - Use persistant connection?
-	private function Connect($persistant = false){
+	public function Connect($persistant = false){
 		$this->CloseConnection();
 		$this->databaseLink = mysqli_connect($this->hostname, $this->username, $this->password, $this->database, $this->port);
 
@@ -72,6 +72,7 @@ class MySQL {
 		}
 		return true;
 	}
+	
 	
 	// Performs a 'mysql_real_escape_string' on the entire array/string
 	private function SecureData($data){
@@ -100,11 +101,11 @@ class MySQL {
 			$this->arrayedColumn = @mysqli_fetch_fields($this->result);
 			$this->records 	= @mysqli_num_rows($this->result);
 			$this->affected	= @mysqli_affected_rows($this->databaseLink);
-			
+				
 			if($this->records > 0){
-                         $this->ArrayResults();
+                $this->ArrayResults();
 					return $this->arrayedResult;
-				}else{
+			}else{
                 return true;
             }
 			
@@ -113,6 +114,57 @@ class MySQL {
 			return false;
 		}
 	}
+	
+	function c_mysqli_call($procName, $params="")
+{
+    if(!$this->databaseLink) {
+        throw new Exception("The MySQLi connection is invalid.");
+    }
+    else
+    {
+        // Execute the SQL command.
+        // The multy_query method is used here to get the buffered results,
+        // so they can be freeded later to avoid the out of sync error.
+        $sql = "CALL {$procName}({$params});";
+        $sqlSuccess = $this->databaseLink->multi_query($sql);
+        if($sqlSuccess)
+        {
+            if($this->databaseLink->more_results())
+            {
+                // Get the first buffered result set, the one with our data.
+                $result = $this->databaseLink->use_result();
+                $output = array();
+                // Put the rows into the outpu array
+                while($row = $result->fetch_assoc())
+                {
+                    $output[] = $row;
+                }
+                // Free the first result set.
+                // If you forget this one, you will get the "out of sync" error.
+                $result->free();
+                // Go through each remaining buffered result and free them as well.
+                // This removes all extra result sets returned, clearing the way
+                // for the next SQL command.
+                while($this->databaseLink->more_results() && $this->databaseLink->next_result())
+                {
+                    $extraResult = $this->databaseLink->use_result();
+                    if($extraResult instanceof mysqli_result){
+                        $extraResult->free();
+                    }
+                }
+                return $output;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            throw new Exception("The call failed: " . $this->databaseLink->error);
+        }
+    }
+}
 	
 	
 	// Adds a record to the database based on the array key names

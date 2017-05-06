@@ -1,0 +1,13 @@
+{* Latte template *}
+
+{block content}
+
+{foreach $hours as $hour}
+    {first}<table>{/first}
+        <tr>
+            <td>{$hour->TimeFrom|date:'%H:%I'}</td>
+			<td>--</td>
+			<td>{$hour->TimeTo|date:'%H:%I'}</td>
+        </tr>
+    {last}</table>{/last}
+{/foreach}

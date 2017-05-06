@@ -1,0 +1,16 @@
+{block content}
+
+{foreach $sensors as $sensor}
+    {first}<table>{/first}
+        <tr>
+            <td>
+				<form n:name=sensorsForm class=form>
+					<label n:name=sensorID>sensorID: <input n:name=sensorID value='{$sensor->sensorID}' size=20></label>
+				<label n:name=day>Den: <select n:name=day></select></label>
+				<input n:name=send class="btn btn-default">
+				</form>
+			</td>
+        </tr>
+    {last}</table>{/last}
+{/foreach}
+

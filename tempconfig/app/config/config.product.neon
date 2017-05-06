@@ -1,0 +1,9 @@
+parameters:
+
+
+nette:
+	database:
+		default:
+			dsn: 'mysql:host=127.0.0.1;dbname=temperature'
+			user:  'temp'
+			password:  'pmet' 

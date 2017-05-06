@@ -1,0 +1,87 @@
+body {
+	font: 12pt/1.4 "Trebuchet MS", "Geneva CE", lucida, sans-serif;
+	color: black;
+	background: none;
+	width: 100%;
+}
+
+a img { border: none; }
+
+#ajax-spinner {
+	display: none;
+}
+
+.head {
+	text-align:center;
+	font-size:18px;
+	font-family:Arial;
+	font-weight:bold;
+}
+
+.pdfprint {
+	margin:0px;padding:0px;
+	width:100%;
+	border:1px solid #000000;
+	
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+	
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+	
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+	
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}.pdfprint table{
+    border-collapse: collapse;
+        border-spacing: 0;
+	width:100%;
+	height:100%;
+	margin:0px;padding:0px;
+
+}.pdfprint tr:hover td{
+	
+}
+.pdfprint tr:nth-child(odd){ background-color:#ffffff; }
+.pdfprint tr:nth-child(even)    { background-color:#cccccc; }.pdfprint td{
+	vertical-align:middle;
+	border:1px solid #000000;
+	border-width:0px 1px 1px 0px;
+	text-align:left;
+	padding:10px;
+	font-size:12px;
+	font-family:Arial;
+	font-weight:normal;
+	color:#000000;
+}.pdfprint tr:last-child td{
+	border-width:0px 1px 0px 0px;
+}.pdfprint tr td:last-child{
+	border-width:0px 0px 1px 0px;
+}.pdfprint tr:last-child td:last-child{
+	border-width:0px 0px 0px 0px;
+}
+.pdfprint th{
+	background-color:#000000;
+	border:0px solid #000000;
+	text-align:center;
+	border-width:0px 0px 1px 1px;
+	font-size:15px;
+	font-family:Arial;
+	font-weight:bold;
+	color:#ffffff;
+}
+.pdfprint tr:first-child:hover td{
+	background-color:#000000;
+}
+.pdfprint tr:first-child td:first-child{
+	border-width:0px 0px 1px 0px;
+}
+.pdfprint tr:first-child td:last-child{
+	border-width:0px 0px 1px 1px;
+}

@@ -13,7 +13,7 @@
  */
 class TempControl {
 	private $tempArray;
-	public $sensorsArray;
+	public  $sensorsArray;
 	private $oMySQL;
 	private $Mail;
 	private $avgAKU;
@@ -23,18 +23,17 @@ class TempControl {
 		$this->tempArray = get_object_vars($tempObj);
 		$this->oMySQL = $oMySQL;
 		$this->Mail = $Mail;
-		$this->GetAllSensorsFomDb();
+		$this->GetAllSensorsFromDb();
 
 	}
 	function InsertIntoTeplota(){
 		foreach ($this->tempArray as $key => $temp) {
 			$temp=round($temp,1);
-			$res = $this->oMySQL->ExecuteSQL("CALL insert_value('','$key',$temp)");
-			if(!$res){
-				return $this->oMySQL->lastError;
-			}
+			$res = $this->oMySQL->c_mysqli_call('insert_value', "'', '$key', $temp");
+			//$res = $this->oMySQL->ExecuteSQL("CALL insert_value('','$key',$temp)");
 		}
 	}
+	
 	function InsertIntoTemp(){
 		$columns = "";
 		$values = "";
@@ -53,21 +52,22 @@ class TempControl {
 			$first = false;
 		}
 		$this->avgAKU = round(($this->tempArray['2E40B4010000']+$this->tempArray['D94FB4010000']+$this->tempArray['FF6AB4010000'])/3,1);//average of aku
-		$sql="INSERT INTO temp ($columns,temp11,timestamp,day) VALUES ($values,$this->avgAKU,NOW(),DATE_FORMAT(NOW(), '%Y-%m-%d'));";
+		$sql="INSERT INTO temp ($columns,temp11,timestamp,day) VALUES ($values,$this->avgAKU,NOW(),DATE_FORMAT(NOW(), '%Y-%m-%d'))";
+		
 		$this->oMySQL->ExecuteSQL($sql);
 	}
 	/*Function to get all sensors ids*/
-	function GetAllSensorsFomDb(){
+	function GetAllSensorsFromDb(){
 		//first get sensor info from db
 		$sql="SELECT sensorID,name,description,limits_pos,limits_neg FROM sensors WHERE active = 1";
-		$this->sensorsArray = $this->oMySQL->ExecuteSQL($sql,false);
+		$this->sensorsArray = $this->oMySQL->ExecuteSQL($sql);
 		if(!$this->sensorsArray){
 				return $this->oMySQL->lastError;
 		}
 		foreach ($this->sensorsArray as $row) {
 			$dbSensorsKeys[]=$row['sensorID'];
 		}
-		//$dbSensorsKeys = array_column($this->sensorsArray, 'sensorID');
+		
 		$newSensorArray = array_diff(array_keys($this->tempArray),$dbSensorsKeys);
 		if(sizeof($newSensorArray)>0){
 			$sql="INSERT IGNORE INTO sensors (sensorID) VALUES ('".implode("'),('", $newSensorArray)."');";
@@ -80,6 +80,7 @@ class TempControl {
 				return $row[$GetValueKey];
 		}
 	}
+	
 	private function ControlTempLimits($sensorID,$temp){
 		foreach ($this->sensorsArray as $row) {
 			if($row['sensorID']==$sensorID){
@@ -89,6 +90,7 @@ class TempControl {
 			}
 		}
 	}
+	
 	private function smtpmailer($to, $from, $from_name, $subject, $body) {
 		$this->Mail = new PHPMailer();
 		$this->Mail->IsSMTP(true);
@@ -112,20 +114,25 @@ class TempControl {
 			echo "Chybová hláška: " . $this->Mail->ErrorInfo;
 		}
 	}
+	
 	private function sendMail($temp,$SensorDesc){
 		$subject="Dosažení teploty : $temp °C na zařízení $SensorDesc";
 		$body="Dosažení teploty : $temp °C na zařízení $SensorDesc čas:".date('d.m.Y H:i');
-		return $this->smtpmailer($GLOBALS["email"], $GLOBALS["from"], $GLOBALS["from_name"], $subject,$body);
+		return $this->smtpmailer($GLOBALS["to"], $GLOBALS["from"], $GLOBALS["from_name"], $subject,$body);
 	}
+	
 	public function Thermostat(){
+	/*
 		$sql="
 			SELECT S.name,TT.Temp,S.sensorID FROM sensors S
 			JOIN time_temp TT ON S.sensorID = TT.sensorID
 			WHERE WEEKDAY(NOW())+1 = TT.Day
-			AND TIME(NOW()) BETWEEN TT.TimeFrom AND TT.TimeTo;
+			AND (TIME(NOW()) BETWEEN TT.TimeFrom AND TT.TimeTo)
+            AND S.sensorID IN ('C44BB4010000','8A44B4010000')
 		";
+		
 		$resultArray = $this->oMySQL->ExecuteSQL($sql);
-      
+		
 		foreach ($resultArray as $result) {
 			$temp = $result['Temp'];
 			$sensorID = $result['sensorID'];
@@ -139,6 +146,14 @@ class TempControl {
 			//}
 		}
 		return 0;
+		*/	
+		$sql = "select MAX(state_needed) state_needed from v_rel_remote where sensorID in ('C44BB4010000','8A44B4010000');";
+		$resultArray = $this->oMySQL->ExecuteSQL($sql);
+		if($resultArray['state_needed'])
+			return 1;
+		else 
+			return 0;
+		
 	}
   public function Solar(){
 	//turn on gpio if temperature is lower then required temp
@@ -150,8 +165,8 @@ class TempControl {
     	$on_to='19:00';
     	if($time>=$on_from && $time<=$on_to)
     	{
-      		return 1;
+      		return 0;
     	}
-    	else return 0;
+    	else return 1;
   }
 }
