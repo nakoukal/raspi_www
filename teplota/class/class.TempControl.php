@@ -165,8 +165,8 @@ class TempControl {
     	$on_to='19:00';
     	if($time>=$on_from && $time<=$on_to)
     	{
-      		return 0;
+      		return 0;          
     	}
-    	else return 1;
+    	else return 0;
   }
 }

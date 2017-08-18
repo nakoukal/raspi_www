@@ -24,7 +24,7 @@ class GPIO {
   
   function __construct($oMySQL)
   {
-    $this->allowed_bits = array(17, 18, 21, 22, 24, 25, 27);
+    $this->allowed_bits = array(16, 17, 18, 21, 22, 24, 25, 27);
     $this->oMySQL = $oMySQL;
   }
   

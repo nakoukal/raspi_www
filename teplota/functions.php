@@ -82,3 +82,47 @@ function GetColor($temperature,$limits_pos,$limits_neg){
 	else
 		return $colorArray[0];
 }
+
+function GetSun($oMySQL)
+{
+	$query="select DATE_FORMAT(sunrise,'%H:%i') sunrise,DATE_FORMAT(sunset,'%H:%i') sunset from sun order by sunrise desc limit 1;";
+		
+	return $oMySQL->ExecuteSQL($query);
+}
+
+/*
+ * Function to get actual sunset and sunrise by location and convert result to 
+ * local time and save to database
+ */
+function SaveSun($oMySQL){
+	// Get cURL resource
+	$curl = curl_init();
+	// Set some options - we are passing in a useragent too here
+	curl_setopt_array($curl, array(
+		CURLOPT_RETURNTRANSFER => 1,
+		CURLOPT_URL => 'https://api.sunrise-sunset.org/json?lng=18.11188&lat=49.53617',
+		CURLOPT_USERAGENT => 'Codular Sample cURL Request'
+	));
+	// Send the request & save response to $resp
+	$resp = curl_exec($curl);
+	// Close request to clear up some resources
+	$out = json_decode($resp);
+	curl_close($curl);
+
+	$mask='Y-m-d H:i';
+
+	$tz_database = new DateTimeZone('GMT');
+	$tz_user = new DateTimeZone('Europe/Prague');
+
+	$date =  new DateTime($out->results->sunrise, $tz_database);
+	$date->setTimezone($tz_user);
+	$sunrise = $date->format($mask); 
+
+	$date =  new DateTime($out->results->sunset, $tz_database);   
+	$date->setTimezone($tz_user);
+	$sunset = $date->format($mask); 
+	
+	$query="INSERT IGNORE INTO sun (sunrise,sunset) VALUES ('$sunrise','$sunset')";
+		
+	return $oMySQL->ExecuteSQL($query);
+}

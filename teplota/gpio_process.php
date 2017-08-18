@@ -8,6 +8,7 @@
 require_once("class/class.MySQL.php");
 require_once('class/PHPMailerAutoload.php');
 require_once("globals.php");
+require_once("functions.php");
 
 if(isset($_GET["action"]))$action = $_GET["action"];
 if(isset($_POST["action"]))$action = $_POST["action"];
@@ -25,6 +26,7 @@ switch ($action) {
 		$jsouOut["releay"] = $oMySQL->ExecuteSQL($query);	
 		echo json_encode($jsouOut);
 		break;
+	
 	case "set":
 		$query="update rel_remote set state_actual=$state where sensorID='$sensorID';";
 		$oMySQL->ExecuteSQL($query);
@@ -34,11 +36,16 @@ switch ($action) {
 		}
 		else{
 			$query="
-			UPDATE sensor_events
-			SET timeto=now()  WHERE sensorID='$sensorID'
-			and timefrom =(SELECT timefrom FROM (SELECT MAX(timefrom ) FROM sensor_events) AS timefrom) ";
+			UPDATE sensor_events SET timeto=now()  
+			WHERE sensorID='$sensorID'
+			and timefrom =(SELECT timefrom FROM (SELECT MAX(timefrom ) timefrom FROM sensor_events where sensorID='$sensorID') AS timefrom);
+			";
 		}		
 		$oMySQL->ExecuteSQL($query);
+		break;
+	
+	case "sun":	
+		echo json_encode(GetSun());
 		break;
 	default:
 		break;

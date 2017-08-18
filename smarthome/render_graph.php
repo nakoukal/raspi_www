@@ -7,6 +7,11 @@ if($argc>2){
 	$Type = $argv[1];
 	$SensorID = $argv[2];
 }
+else
+{
+	exit(0);
+}
+
 require_once("globals.php");
 include("pChart/class/pData.class.php");
 include("pChart/class/pDraw.class.php");

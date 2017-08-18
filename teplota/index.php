@@ -26,7 +26,7 @@ and open the template in the editor.
 			h1{
 				font-weight: bold;
 				font-family: sans-serif;
-				font-size: 60px;
+				font-size: 70px;
 			}
 			
 			h2{
@@ -100,7 +100,7 @@ and open the template in the editor.
 			.contentB {
 				float:left;
 				background:black;
-				width:500px;
+				width:600px;
 			}
 			.contentC {
 				float:left;
@@ -126,7 +126,11 @@ and open the template in the editor.
 		require_once '../vendor/autoload.php';
 		$oMySQL = new MySQL($dbname,$dblogin,$dbpwd,$dbhost);
 		
+		$dnes = date('H:i');
+		if($dnes=='00:00' || $dnes == '00:01' || $dnes == '00:02' || $dnes == '00:03')
+			SaveSun($oMySQL);
 		
+		$sun = GetSun($oMySQL);
 		?>
 		<div class="container">
 		<div class="contentA">
@@ -140,11 +144,15 @@ and open the template in the editor.
 		?>
 		</div>
 		<div class="contentB">
-		<h1><?php echo date('d.m.Y H:i:s'); ?></h1>
+		<h1><?php echo date('d.m.y H:i:s'); ?></h1>
 		
 		<h2><?php echo "Dnes má svátek ".GetSvatekDnes().", zítra ".GetSvatekZitra(); ?></h2>
+		<h2><img src="img/Weather-Sunrise-icon.png" width="10" alt=""/>&nbsp;<?php echo $sun['sunrise']; ?>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<img src="img/Weather-Sunset-icon.png" width="10" alt=""/>&nbsp;<?php echo $sun['sunset']; ?></h2>
+		
 		<hr>
-		<h3>UDÁLOSTI</h3>
+		<h2>UDÁLOSTI</h2>
 		<?php  GetItemsFromCalendar() ?>
 		</div>
 			<div class="contentC">
