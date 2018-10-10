@@ -1,36 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-	{block head}
 	<meta charset="utf-8">
-
-	<title>{ifset #title}{include title|striptags} | {/ifset}Nette Sandbox</title>
-
-	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css">
-	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css">
-	<link rel="stylesheet" href="{$basePath}/multiple_load.php?phase=css_main&amp;version=1">
-	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
-	{block scripts}
-		<script src="{$basePath}/multiple_load.php?phase=js_main&amp;version=1" type="text/javascript"></script>
-		<script type="text/javascript">
-		$(document).ready(function()
-		{
-			$('input.datetimepicker').datetimepicker(
-			{
-				lang:'cs',
-				format:'d.m.Y H:i',
-				validateOnBlur: false
-			});
-		});
-		</script>
-	{/block}
-	{/block}
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="{$basePath}/css/bootstrap3.nextras.datagrid.css" type="text/css">
+	<link rel="stylesheet" href="{$basePath}/css/temperature.css" type="text/css">
+	<link rel="stylesheet" href="{$basePath}/css/screen.css" type="text/css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.js" ></script>
+	<script type="text/javascript" src="{$basePath}/js/nette.ajax.js" ></script>
+	<script type="text/javascript" src="{$basePath}/js/temperature.js" ></script>
+	<script type="text/javascript" >
+	$(function () {
+		$.nette.init();
+	});
+	</script>
+	<script src="{$basePath}/js/nextras.datagrid.js"></script>
+	<title>{ifset title}{include title|striptags} | {/ifset}Nette Web</title>
 </head>
 
 <body>
 	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
 
 	{include content}
+
+	{block scripts}
+	<script src="https://nette.github.io/resources/js/netteForms.min.js"></script>
+	{/block}
 
 </div>
 </body>

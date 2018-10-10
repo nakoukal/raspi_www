@@ -80,3 +80,15 @@ function GetSun()
 		
 		return array('sunrise'=>$sunrise,'sunset'=>$sunset);
 }
+
+function GetColor($temperature,$limits_pos,$limits_neg){
+	$colorArray = $GLOBALS["colorArray"];
+	$limits = ($limits_pos - $limits_neg);
+	$temp =  ($temperature - $limits_neg);
+	$tempProc = 100/$limits*$temp;
+	$colorNumber = round(count($colorArray)/100*$tempProc);
+	if(sizeof($colorNumber)<=$colorNumber)
+		return $colorArray[$colorNumber];
+	else
+		return $colorArray[0];
+}

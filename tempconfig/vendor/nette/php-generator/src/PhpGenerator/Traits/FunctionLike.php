@@ -25,18 +25,18 @@ trait FunctionLike
 	private $parameters = [];
 
 	/** @var bool */
-	private $variadic = FALSE;
+	private $variadic = false;
 
-	/** @var string|NULL */
+	/** @var string|null */
 	private $returnType;
 
 	/** @var bool */
-	private $returnReference = FALSE;
+	private $returnReference = false;
 
 	/** @var bool */
-	private $returnNullable;
+	private $returnNullable = false;
 
-	/** @var PhpNamespace|NULL */
+	/** @var PhpNamespace|null */
 	private $namespace;
 
 
@@ -44,9 +44,9 @@ trait FunctionLike
 	 * @param  string
 	 * @return static
 	 */
-	public function setBody($code, array $args = NULL)
+	public function setBody($code, array $args = null)
 	{
-		$this->body = $args === NULL ? $code : Helpers::formatArgs($code, $args);
+		$this->body = $args === null ? $code : Helpers::formatArgs($code, $args);
 		return $this;
 	}
 
@@ -64,9 +64,9 @@ trait FunctionLike
 	 * @param  string
 	 * @return static
 	 */
-	public function addBody($code, array $args = NULL)
+	public function addBody($code, array $args = null)
 	{
-		$this->body .= ($args === NULL ? $code : Helpers::formatArgs($code, $args)) . "\n";
+		$this->body .= ($args === null ? $code : Helpers::formatArgs($code, $args)) . "\n";
 		return $this;
 	}
 
@@ -101,11 +101,11 @@ trait FunctionLike
 	 * @param  string  without $
 	 * @return Parameter
 	 */
-	public function addParameter($name, $defaultValue = NULL)
+	public function addParameter($name, $defaultValue = null)
 	{
 		$param = new Parameter($name);
 		if (func_num_args() > 1) {
-			$param->setOptional(TRUE)->setDefaultValue($defaultValue);
+			$param->setOptional(true)->setDefaultValue($defaultValue);
 		}
 		return $this->parameters[$name] = $param;
 	}
@@ -115,9 +115,9 @@ trait FunctionLike
 	 * @param  bool
 	 * @return static
 	 */
-	public function setVariadic($val)
+	public function setVariadic($state = true)
 	{
-		$this->variadic = (bool) $val;
+		$this->variadic = (bool) $state;
 		return $this;
 	}
 
@@ -132,18 +132,18 @@ trait FunctionLike
 
 
 	/**
-	 * @param  string|NULL
+	 * @param  string|null
 	 * @return static
 	 */
 	public function setReturnType($val)
 	{
-		$this->returnType = $val ? (string) $val : NULL;
+		$this->returnType = $val ? (string) $val : null;
 		return $this;
 	}
 
 
 	/**
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public function getReturnType()
 	{
@@ -155,9 +155,9 @@ trait FunctionLike
 	 * @param  bool
 	 * @return static
 	 */
-	public function setReturnReference($val)
+	public function setReturnReference($state = true)
 	{
-		$this->returnReference = (bool) $val;
+		$this->returnReference = (bool) $state;
 		return $this;
 	}
 
@@ -175,9 +175,9 @@ trait FunctionLike
 	 * @param  bool
 	 * @return static
 	 */
-	public function setReturnNullable($val)
+	public function setReturnNullable($state = true)
 	{
-		$this->returnNullable = (bool) $val;
+		$this->returnNullable = (bool) $state;
 		return $this;
 	}
 
@@ -194,7 +194,7 @@ trait FunctionLike
 	/**
 	 * @return static
 	 */
-	public function setNamespace(PhpNamespace $val = NULL)
+	public function setNamespace(PhpNamespace $val = null)
 	{
 		$this->namespace = $val;
 		return $this;
@@ -216,7 +216,10 @@ trait FunctionLike
 				. '$' . $param->getName()
 				. ($param->hasDefaultValue() && !$variadic ? ' = ' . Helpers::dump($param->defaultValue) : '');
 		}
-		return '(' . implode(', ', $params) . ')';
+
+		return strlen($tmp = implode(', ', $params)) > Helpers::WRAP_LENGTH && count($params) > 1
+			? "(\n\t" . implode(",\n\t", $params) . "\n)"
+			: "($tmp)";
 	}
 
 
@@ -229,5 +232,4 @@ trait FunctionLike
 			? ': ' . ($this->returnNullable ? '?' : '') . ($this->namespace ? $this->namespace->unresolveName($this->returnType) : $this->returnType)
 			: '';
 	}
-
 }

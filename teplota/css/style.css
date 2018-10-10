@@ -26,7 +26,117 @@ table.sample td {
 	height:16px;
 }
 
-.input {
-	margin: 0px 0px 0px 0px;
-	padding:0px 0px 0px 0px;
+input {
+	margin: 10px 10px 10px 10px;
+	padding:10px 10px 10px 10px;
+	color:white;
+	background-color: black;
+	font-weight: bold;
+	font-family: sans-serif;
+	font-size: 40px;
+}
+
+body {
+	background-color: black;
+	color:white;
+}
+
+table {
+		font-family: sans-serif;
+		border-collapse: collapse;
+		width: 600px;
+		margin-bottom: 20px;
+		margin-top:  20px;
+}
+
+h1{
+		font-weight: bold;
+		font-family: sans-serif;
+		font-size: 70px;
+}
+
+h2{
+		font-weight: bold;
+		font-family: sans-serif;
+		font-size: 40px;
+}
+
+h3{
+		font-weight: bold;
+		font-family: sans-serif;
+		font-size: 30px;
+}
+
+table, th, td {
+		border: 1px solid black;
+		text-align: left;
+}
+
+th, td {
+		padding: 3px;
+		text-align: center;
+		font-weight: bold;
+}
+
+th{				
+		color: white;
+		font-size: 50px;
+}
+
+
+.akt{
+		font-size: 70px;				
+		text-align: left;
+		width: 150px;
+}
+
+.akt_nadp{
+		font-size: 60px;				
+		width: 170px;
+}
+.cerp{
+		width: 100px;
+		height:80px;
+
+}
+
+.max{
+		font-size: 30px;			
+		background-color: #ff6633;
+		color:black;
+}
+
+.min{
+		font-size: 30px;		
+		background-color: #66ccff;
+		color:black;
+}
+
+.container {
+		width:1280px;
+		background:black;
+		overflow:hidden; /* also used as a clearfix */
+}
+
+.contentA {
+		float:left;
+		background:black;
+		width:500px;
+}
+.contentB {
+		float:left;
+		background:black;
+		width:650px;
+}
+.contentC {
+		float:left;
+		background:black;
+		width:100px;
+}
+.event {
+		font-size: 25px;
+}
+
+.time{
+		font-size: 20px;
 }

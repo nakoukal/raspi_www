@@ -16,9 +16,9 @@ class RouterFactory
 	 */
 	public static function createRouter()
 	{
-		//$router = new Nette\Application\Routers\SimpleRouter('Homepage:default');
-		$router = new RouteList;
-		$router[] = new Route('<presenter>/<action>[/<id>]');
+		// alternativně zapsáno polem
+		$router = new RouteList();		
+		$router[] = new Route('<presenter>/<action>/[<sensorID>]', 'Relremote:default');		
 		return $router;
 	}
 

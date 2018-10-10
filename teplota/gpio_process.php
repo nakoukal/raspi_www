@@ -22,7 +22,8 @@ $Mail = new PHPMailer();
 
 switch ($action) {
 	case "get":
-		$query="select sensorID,releay_number,state_needed,state_actual from v_rel_remote;";
+		$query='SELECT sensorID,releay_number,state_needed,state_actual FROM v_rel_remote;';
+
 		$jsouOut["releay"] = $oMySQL->ExecuteSQL($query);	
 		echo json_encode($jsouOut);
 		break;

@@ -1,10 +1,17 @@
 # WARNING: it is CRITICAL that this file & directory are NOT accessible directly via a web browser!
 # https://nette.org/security-warning
-
-parameters:
-
 php:
 	date.timezone: Europe/Prague
+
+parameters:	
+	weekdays:
+		- "Po"
+		- "Ut"
+		- "St"
+		- "Ct"
+		- "Pa"
+		- "So"
+		- "Ne"
 
 
 application:
@@ -16,9 +23,16 @@ application:
 session:	
 	expiration: 14 days
 
+latte:
+	macros:
+		- Nextras\Latte\Macros\RedefineMacro
 
 services:
+	- CategoryForm
+	authenticator: MyAuthenticator	
 	sensorsRepository: Temp\SensorsRepository
 	timetempRepository: Temp\TimetempRepository
-	router: App\RouterFactory::createRouter
+	relremoteRepository: Temp\RelremoteRepository			
+	#router: App\RouterFactory::createRouter
+	router: Nette\Application\Routers\SimpleRouter('Relremote:default')
 

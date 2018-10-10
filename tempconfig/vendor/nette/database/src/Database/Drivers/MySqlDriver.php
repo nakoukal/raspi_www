@@ -18,7 +18,9 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	use Nette\SmartObject;
 
 	const ERROR_ACCESS_DENIED = 1045;
+
 	const ERROR_DUPLICATE_ENTRY = 1062;
+
 	const ERROR_DATA_TRUNCATED = 1265;
 
 	/** @var Nette\Database\Connection */
@@ -45,22 +47,19 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * @return Nette\Database\DriverException
-	 */
 	public function convertException(\PDOException $e)
 	{
-		$code = isset($e->errorInfo[1]) ? $e->errorInfo[1] : NULL;
-		if (in_array($code, [1216, 1217, 1451, 1452, 1701], TRUE)) {
+		$code = isset($e->errorInfo[1]) ? $e->errorInfo[1] : null;
+		if (in_array($code, [1216, 1217, 1451, 1452, 1701], true)) {
 			return Nette\Database\ForeignKeyConstraintViolationException::from($e);
 
-		} elseif (in_array($code, [1062, 1557, 1569, 1586], TRUE)) {
+		} elseif (in_array($code, [1062, 1557, 1569, 1586], true)) {
 			return Nette\Database\UniqueConstraintViolationException::from($e);
 
 		} elseif ($code >= 2001 && $code <= 2028) {
 			return Nette\Database\ConnectionException::from($e);
 
-		} elseif (in_array($code, [1048, 1121, 1138, 1171, 1252, 1263, 1566], TRUE)) {
+		} elseif (in_array($code, [1048, 1121, 1138, 1171, 1252, 1263, 1566], true)) {
 			return Nette\Database\NotNullConstraintViolationException::from($e);
 
 		} else {
@@ -72,9 +71,6 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	/********************* SQL ****************d*g**/
 
 
-	/**
-	 * Delimites identifier for use in a SQL statement.
-	 */
 	public function delimite($name)
 	{
 		// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
@@ -82,36 +78,24 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * Formats boolean for use in a SQL statement.
-	 */
 	public function formatBool($value)
 	{
 		return $value ? '1' : '0';
 	}
 
 
-	/**
-	 * Formats date-time for use in a SQL statement.
-	 */
 	public function formatDateTime(/*\DateTimeInterface*/ $value)
 	{
 		return $value->format("'Y-m-d H:i:s'");
 	}
 
 
-	/**
-	 * Formats date-time interval for use in a SQL statement.
-	 */
 	public function formatDateInterval(\DateInterval $value)
 	{
 		return $value->format("'%r%h:%I:%S'");
 	}
 
 
-	/**
-	 * Encodes string for use in a LIKE statement.
-	 */
 	public function formatLike($value, $pos)
 	{
 		$value = str_replace('\\', '\\\\', $value);
@@ -120,25 +104,19 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * Injects LIMIT/OFFSET to the SQL query.
-	 */
 	public function applyLimit(&$sql, $limit, $offset)
 	{
 		if ($limit < 0 || $offset < 0) {
 			throw new Nette\InvalidArgumentException('Negative offset or limit.');
 
-		} elseif ($limit !== NULL || $offset) {
+		} elseif ($limit !== null || $offset) {
 			// see http://dev.mysql.com/doc/refman/5.0/en/select.html
-			$sql .= ' LIMIT ' . ($limit === NULL ? '18446744073709551615' : (int) $limit)
+			$sql .= ' LIMIT ' . ($limit === null ? '18446744073709551615' : (int) $limit)
 				. ($offset ? ' OFFSET ' . (int) $offset : '');
 		}
 	}
 
 
-	/**
-	 * Normalizes result row.
-	 */
 	public function normalizeRow($row)
 	{
 		return $row;
@@ -148,9 +126,6 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	/********************* reflection ****************d*g**/
 
 
-	/**
-	 * Returns list of tables.
-	 */
 	public function getTables()
 	{
 		$tables = [];
@@ -164,9 +139,6 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * Returns metadata for all columns in a table.
-	 */
 	public function getColumns($table)
 	{
 		$columns = [];
@@ -176,7 +148,7 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 				'name' => $row['Field'],
 				'table' => $table,
 				'nativetype' => strtoupper($type[0]),
-				'size' => isset($type[1]) ? (int) $type[1] : NULL,
+				'size' => isset($type[1]) ? (int) $type[1] : null,
 				'unsigned' => (bool) strstr($row['Type'], 'unsigned'),
 				'nullable' => $row['Null'] === 'YES',
 				'default' => $row['Default'],
@@ -189,9 +161,6 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * Returns metadata for all indexes in a table.
-	 */
 	public function getIndexes($table)
 	{
 		$indexes = [];
@@ -205,9 +174,6 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * Returns metadata for all foreign keys in a table.
-	 */
 	public function getForeignKeys($table)
 	{
 		$keys = [];
@@ -225,9 +191,6 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * Returns associative array of detected types (IReflection::FIELD_*) in result set.
-	 */
 	public function getColumnTypes(\PDOStatement $statement)
 	{
 		$types = [];
@@ -245,10 +208,6 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 	}
 
 
-	/**
-	 * @param  string
-	 * @return bool
-	 */
 	public function isSupported($item)
 	{
 		// MULTI_COLUMN_AS_OR_COND due to mysql bugs:
@@ -257,5 +216,4 @@ class MySqlDriver implements Nette\Database\ISupplementalDriver
 		// and more.
 		return $item === self::SUPPORT_SELECT_UNGROUPED_COLUMNS || $item === self::SUPPORT_MULTI_COLUMN_AS_OR_COND;
 	}
-
 }

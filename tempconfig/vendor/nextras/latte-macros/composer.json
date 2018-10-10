@@ -1,0 +1,26 @@
+{
+	"name": "nextras/latte-macros",
+	"type": "library",
+	"description": "Latte macros for Nette Framework.",
+	"keywords": ["nextras", "nette", "latte", "macros", "block-macros"],
+	"license": ["MIT"],
+	"authors": [
+		{
+			"name": "Jan Skrasek",
+			"email": "hrach.cz@gmail.com",
+			"homepage": "http://jan.skrasek.com"
+		}
+	],
+	"require": {
+		"php": ">=5.3",
+		"latte/latte": "~2.2"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.1-dev"
+		}
+	},
+	"autoload": {
+		"psr-4": { "Nextras\\Latte\\Macros\\": "src/" }
+	}
+}

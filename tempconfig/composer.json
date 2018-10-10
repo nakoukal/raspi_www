@@ -20,7 +20,7 @@
 		"nette/utils": "^2.3",
 		"latte/latte": "^2.3",
 		"tracy/tracy": "^2.3",
-		"dg/adminer-custom": "~1.5"
+		"nextras/datagrid": "^3.0"
 	},
 	"require-dev": {
 		"nette/tester": "^1.6"

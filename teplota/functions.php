@@ -66,8 +66,7 @@ function GetItemsFromCalendar(){
 }
 
 function GetSensorsTemp($oMySQL){
-	$query="select st.* , (select state_needed from v_rel_remote where sensorID=st.sensorID) image from v_sensors_temp st order by pozice";
-		
+$query="select st.*,rr.state_actual,rr.releay_number,rr.temp_needed from v_sensors_temp st left join v_rel_remote rr on st.sensorID=rr.sensorID where rr.releay_number is NULL or rr.releay_number>4 order by st.pozice";	
 	return $oMySQL->ExecuteSQL($query);
 }
 
@@ -125,4 +124,20 @@ function SaveSun($oMySQL){
 	$query="INSERT IGNORE INTO sun (sunrise,sunset) VALUES ('$sunrise','$sunset')";
 		
 	return $oMySQL->ExecuteSQL($query);
+}
+
+function print_temp($row,$bgcolor){
+	//$row['sensorID'],$row['description'], $row['act_temp'],$bgcolor,$row['state_actual']
+	$image = ($row['state_actual']==1)?'<img src="img/cerpadlo2.gif" align="left" width="100px"/>':'';
+	return '	
+	<table class="tab01">
+			<tbody>
+				<tr onclick="window.location=\'sensor_edit.php?sensorID='.$row['sensorID'].'&releay='.$row['releay_number'].'&act='.$row['act_temp'].'&req='.$row['temp_needed'].'&des='.$row['description'].'\'">
+					<td class="akt_nadp">'.trim($row['description']).': </td>					
+					<td class="akt"	style="color:#'.$bgcolor.';">'.$row['act_temp'].'°C</td>					
+					<td class="image">'.$image.'</td>
+				</tr>
+			</tbody>
+	</table>
+';
 }

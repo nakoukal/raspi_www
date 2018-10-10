@@ -1,0 +1,35 @@
+{block content}
+{foreach $sensors as $sensor}    
+	{first}	
+	<table class='teplota' border="1">
+	<tr>
+		<th>Name</th>		
+		<th>Temp</th>
+		<th>Sheduler</th>
+		<th>Ex h</th>
+		<th>Ex St</th>
+		<th></th>
+		<th></th>
+	</tr>
+{/first}
+{form categoryForm}
+	<input n:name=sensorID value='{$sensor->sensorID}'>
+    <tr {if $sensor->state_actual} style='background:green;'{/if}>
+		<td>{$sensor->name}</td>		
+		<td>{$sensor->act_temp}</td>
+		<td>
+			<a n:href="Timetemp:hours $sensor->sensorID">
+				<div class='link'>{$sensor->temp_needed}</div>
+			</a>			
+			
+		</td>
+		<td>{$sensor->state_extra_hour}</td>
+		<td><input n:name=state class="btn btn-default" value="{$sensor->state_extra}"></td>
+		<td><input n:name=date value="{$sensor->state_extra_time|date:'Y-m-d'}T{$sensor->state_extra_time|date:'H:i'}"></td>
+		<td><input n:name=plus class="btn btn-default"></td>		
+    </tr>
+{/form}
+{last}</table>{/last}
+{/foreach}
+
+

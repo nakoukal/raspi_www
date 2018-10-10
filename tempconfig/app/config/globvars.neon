@@ -1,0 +1,10 @@
+parameters:	
+	weekdays:
+		- "Po"
+		- "Ut"
+		- "St"
+		- "Ct"
+		- "Pa"
+		- "So"
+		- "Ne"
+		

@@ -15,18 +15,34 @@
 namespace Temp;
 
 class TimetempRepository extends Repository{
+	
+	
 	public function GetSensors()
 	{
-		return $this->context->table('time_temp')->select('DISTINCT sensorID');
+		return $this->db->table('time_temp')->select('DISTINCT sensorID');
 	}
 	
 	public function GetHoursBy(array $by)
 	{
-		return $this->context->table('time_temp')->where($by)->select('TimeFrom,TimeTo');
+		return $this->db->table('time_temp')->where($by)->select('TimetempID,sensorID,Day,Temp,TimeFrom,TimeTo');
 	}
 	
 	public function GetDaysBy(array $by)
 	{
-		return $this->context->table('time_temp')->where($by)->select('day');
+		return $this->db->table('time_temp')->where($by)->select('day');
+	}
+	
+	public function IncreaseTemp(array $values)
+	{
+		foreach ($values as $value) {			
+			$this->db->table('time_temp')->where(array('TimetempID'=>$value))->update(['Temp+=' => 0.5]);
+		}		
+	}
+	
+	public function DegreaseTemp(array $values)
+	{
+		foreach ($values as $value) {			
+			$this->db->table('time_temp')->where(array('TimetempID'=>$value))->update(['Temp-=' => 0.5]);
+		}		
 	}
 }

@@ -1,13 +1,40 @@
 {* Latte template *}
 
 {block content}
-
+<form n:name=tempForm class=form>
+	<input n:name=sensorID value='{$presenter->getParam()['sensorID']}'>
 {foreach $hours as $hour}
-    {first}<table>{/first}
-        <tr>
-            <td>{$hour->TimeFrom|date:'%H:%I'}</td>
-			<td>--</td>
-			<td>{$hour->TimeTo|date:'%H:%I'}</td>
-        </tr>
-    {last}</table>{/last}
+    {first}		
+		<table class='teplota' border="1">
+			<tr>
+				<th colspan="5">
+					<a n:href="Relremote:default">
+					<div class='link'> <<< HOME</div>
+			</a>			
+				</th>
+			</tr>
+			<tr>
+				<th>Day</th>		
+				<th>From</th>			
+				<th>To</th>
+				<th>Temp</th>
+				<th><input type=checkbox name="select-all" onclick="toggle(this);"></th>
+			</tr>
+	{/first}
+			<tr>
+				<td>{$globals['weekdays'][$hour->Day-1]}</td>
+				<td>{$hour->TimeFrom|date:'%H:%I'}</td>			
+				<td>{$hour->TimeTo|date:'%H:%I'}</td>
+				<td>{$hour->Temp}</td>			
+				<td><input type=checkbox name="sel[]" value={$hour->TimetempID}></td>
+			</tr>
+    {last}		
+			<tr>
+				<td colspan='2'><input n:name=minus class="btn btn-default"></td>
+				<td></td>
+				<td colspan='2'><input n:name=plus class="btn btn-default"></td>
+			</tr>		
+		</table>		
+	{/last}	
 {/foreach}
+</form>

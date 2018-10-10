@@ -14,14 +14,14 @@
 namespace Temp;
 use Nette;
 
-abstract class Repository extends Nette\Object {
+abstract class Repository{
 	
 	/** @var Nette\Database\Connection */
-    public $context;
+    public $db;
 
     public function __construct(\Nette\Database\Context $db)
     {
-        $this->context = $db;
+        $this->db = $db;
 		//dump($this->context);
     }
 
@@ -33,7 +33,7 @@ abstract class Repository extends Nette\Object {
     {
         // název tabulky odvodíme z názvu třídy
         preg_match('#(\w+)Repository$#', get_class($this), $m);
-        return $this->context->table(lcfirst($m[1]));
+        return $this->db->table(lcfirst($m[1]));
     }
 
     /**

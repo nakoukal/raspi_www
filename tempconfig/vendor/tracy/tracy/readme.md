@@ -8,6 +8,10 @@
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/tracy/blob/master/license.md)
 [![Join the chat at https://gitter.im/nette/tracy](https://badges.gitter.im/nette/tracy.svg)](https://gitter.im/nette/tracy)
 
+
+Introduction
+------------
+
 Tracy library is a useful helper for everyday PHP programmers. It helps you to:
 
 - quickly detect and correct errors
@@ -21,23 +25,31 @@ PHP is a perfect language for making hardly detectable errors because it gives a
 If you are meeting Tracy the first time, believe me, your life starts to be divided one before the Tracy and the one with her.
 Welcome to the good part!
 
+Documentation can be found on the [website](https://tracy.nette.org).
 
-Installation and requirements
------------------------------
+If you like Tracy, **[please make a donation now](https://nette.org/make-donation?to=tracy)**. Thank you!
 
-The best way how to install Tracy is to [download a latest package](https://github.com/nette/tracy/releases) or use a Composer:
+
+Installation
+------------
+
+The recommended way to is via Composer:
 
 ```
-php composer.phar require tracy/tracy
+composer require tracy/tracy
 ```
 
-Tracy requires PHP version 5.3.0 or newer (master requires PHP 5.4.4).
+Alternatively, you can download the whole package or [tracy.phar](https://github.com/nette/tester/releases) file.
+
+Tracy 2.5 requires PHP version 5.4.4 or newer (supports PHP up to 7.2) and is compatible with Chrome 49+, Firefox 45+, MS Edge 12+, Safari 10+ and iOS Safari 10.2+.
+
+Tracy 2.4 requires PHP version 5.4.4 or newer (supports PHP up to 7.2) and is compatible with Chrome 29+, Firefox 28+, IE 11+, MS Edge 12+, Safari 9+ and iOS Safari 9.2+.
 
 
 Usage
 -----
 
-Activating Tracy is easy. Simply add these two lines of code, preferably just after library loading (using `require 'src/tracy.php'` or via Composer):
+Activating Tracy is easy. Simply add these two lines of code, preferably just after library loading (like `require 'vendor/autoload.php'`) and before any output is sent to browser:
 
 ```php
 use Tracy\Debugger;
@@ -46,6 +58,9 @@ Debugger::enable();
 ```
 
 The first thing you will notice on the website is a Debugger Bar.
+
+(If you do not see anything, it means that Tracy is running in production mode. For security reasons, Tracy is visible only on localhost.
+You may force Tracy to run in development mode by passing the `Debugger::DEVELOPMENT` as the first parameter of `enable()` method.)
 
 
 Debugger Bar
@@ -56,6 +71,9 @@ The Debugger Bar is a floating panel. It is displayed in the bottom right corner
 [![Debugger-Bar](https://nette.github.io/tracy/images/tracy-bar.png)](https://nette.github.io/tracy/tracy-debug-bar.html)
 
 You can add other useful panels into the Debugger Bar. You can find interesing ones in [Addons](https://addons.nette.org) or you can create your own.
+
+Implementation of custom panel is easy, just implement interface `Tracy\IBarPanel` with two methods `getTab` and `getPanel`, both returning HTML content to be displayed.
+Afterward, registering via `Debugger::getBar()->addPanel(new CustomPanel());` is everything you will need to do.
 
 
 Visualization of errors and exceptions
@@ -97,12 +115,54 @@ Errors like a typo in a variable name or an attempt to open a nonexistent file g
 Or they may be displayed like errors:
 
 ```php
-Debugger::$strictMode = TRUE;
+Debugger::$strictMode = true;
 ```
 
 [![Notice rendered by Tracy](https://nette.github.io/tracy/images/tracy-notice.png)](https://nette.github.io/tracy/tracy-notice.html)
 
 If your site uses Content Security Policy, you'll need to add `'unsafe-inline'` to `style-src`, and `'self'` or `'nonce-<value>` to `script-src` for Tracy to work properly. Avoid adding `'unsafe-inline'` in production mode, if you can. Some 3rd plugins may require additional directives.
+
+
+Faster loading
+--------------
+
+The basic integration is straightforward, however if you have slow blocking scripts in web page, they can slow the Tracy loading.
+The solution is to place `<?php Tracy\Debugger::renderLoader() ?>` into your template before
+any scripts:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<title>...<title>
+	<?php Tracy\Debugger::renderLoader() ?>
+	<link rel="stylesheet" href="assets/style.css">
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+```
+
+
+AJAX and redirected requests
+----------------------------
+
+Tracy is able to show Debug bar and Bluescreens for AJAX and redirected requests. You just have to start session before Tracy:
+
+```php
+session_start();
+Debugger::enable();
+```
+
+In case you use non-standard session handler, you can start Tracy immediately (in order to handle any errors), then initialize your session handler
+and then inform Tracy that session is ready to use via `dispatch()`:
+
+```php
+Debugger::enable();
+
+// initialize session handler
+session_start();
+
+Debugger::dispatch();
+```
 
 
 Production mode and error logging
@@ -112,7 +172,7 @@ As you can see, Tracy is quite eloquent. It is appreciated in a development envi
 
 [![Server Error 500](https://nette.github.io/tracy/images/tracy-error2.png)](https://nette.github.io/tracy/tracy-production.html)
 
-Production output mode suppresses all debugging information which is sent out via `Debugger::dump()` or `Debugger::fireLog()`, and of course all error messages generated by PHP. So, even if you forget `Debugger::dump($obj)` in the source code, you do not have to worry about it on your production server. Nothing will be seen.
+Production output mode suppresses all debugging information which is sent out via `dump()` or `Debugger::fireLog()`, and of course all error messages generated by PHP. So, even if you forget `dump($obj)` in the source code, you do not have to worry about it on your production server. Nothing will be seen.
 
 The output mode is set by the first parameter of `Debugger::enable()`. You can specify either a constant `Debugger::PRODUCTION` or `Debugger::DEVELOPMENT`.
 
@@ -158,10 +218,10 @@ To protect your e-mail box from flood, Tracy sends **only one message** and crea
 Variable dumping
 -----------------
 
-Every debugging developer is a good friend with the function `var_dump`, which lists all contents of any variable in detail. Unfortunately, its output is without HTML formatting and outputs the dump into a single line of HTML code, not to mention context escaping. It is necessary to replace the `var_dump` by a handier function. That is just what `Debugger::dump()` is.
+Every debugging developer is a good friend with the function `var_dump`, which lists all contents of any variable in detail. Unfortunately, its output is without HTML formatting and outputs the dump into a single line of HTML code, not to mention context escaping. It is necessary to replace the `var_dump` by a handier function. That is just what `dump()` is.
 
 ```php
-$arr = array(10, 20.2, TRUE, NULL, 'hello');
+$arr = array(10, 20.2, true, null, 'hello');
 
 dump($arr);
 // or Tracy\Debugger::dump($arr);
@@ -183,15 +243,15 @@ The `dump()` function can display other useful information. `Tracy\Dumper::LOCAT
 ```php
 Debugger::$showLocation = Tracy\Dumper::LOCATION_SOURCE; // Shows path to where the dump() was called
 Debugger::$showLocation = Tracy\Dumper::LOCATION_CLASS | Tracy\Dumper::LOCATION_LINK; // Shows both paths to the classes and link to where the dump() was called
-Debugger::$showLocation = FALSE; // Hides additional location information
-Debugger::$showLocation = TRUE; // Shows all additional location information
+Debugger::$showLocation = false; // Hides additional location information
+Debugger::$showLocation = true; // Shows all additional location information
 ```
 
-Very handy alternative to `Debugger::dump()` is `Debugger::barDump()`. This allows us to dump variables in Debugger Bar. This is useful, because dumps don't mess up the output and we can also add a title to the dump.
+Very handy alternative to `dump()` is `dumpe()` (ie. dump and exit) and `bdump()`. This allows us to dump variables in Debugger Bar. This is useful, because dumps don't mess up the output and we can also add a title to the dump.
 
 ```php
-Debugger::barDump([2, 4, 6, 8], 'even numbers up to ten');
-Debugger::barDump([1, 3, 5, 7, 9], 'odd numbers up to ten');
+bdump([2, 4, 6, 8], 'even numbers up to ten');
+bdump([1, 3, 5, 7, 9], 'odd numbers up to ten');
 ```
 
 ![bar dump](https://nette.github.io/tracy/images/tracy-bardump.png)
@@ -266,3 +326,16 @@ Debugger::fireLog(new Exception('Test Exception')); // or exceptions
 The result looks like this:
 
 ![FireLogger](https://nette.github.io/tracy/images/tracy-firelogger.png)
+
+Ports
+-----------------------------
+This is list of unofficial ports to another frameworks and CMS than Nette:
+- [Drupal 7](http://drupal.org/project/traced)
+- Laravel framework: [recca0120/laravel-tracy](https://github.com/recca0120/laravel-tracy), [whipsterCZ/laravel-tracy](https://github.com/whipsterCZ/laravel-tracy)
+- [OpenCart](https://github.com/BurdaPraha/oc_tracy)
+- [ProcessWire CMS/CMF](https://github.com/adrianbj/TracyDebugger)
+- [Slim Framework](https://github.com/runcmf/runtracy)
+- Symfony framework: [kutny/tracy-bundle](https://github.com/kutny/tracy-bundle), [VasekPurchart/Tracy-Blue-Screen-Bundle](https://github.com/VasekPurchart/Tracy-Blue-Screen-Bundle)
+- [Wordpress](https://github.com/ktstudio/WP-Tracy)
+
+... feel free to be famous, create a port for your favourite platform!

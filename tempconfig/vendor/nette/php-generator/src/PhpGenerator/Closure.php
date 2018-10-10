@@ -42,10 +42,14 @@ class Closure
 		foreach ($this->uses as $param) {
 			$uses[] = ($param->isReference() ? '&' : '') . '$' . $param->getName();
 		}
+		$useStr = strlen($tmp = implode(', ', $uses)) > Helpers::WRAP_LENGTH && count($uses) > 1
+			? "\n\t" . implode(",\n\t", $uses) . "\n"
+			: $tmp;
+
 		return 'function '
 			. ($this->returnReference ? '&' : '')
 			. $this->parametersToString()
-			. ($this->uses ? ' use (' . implode(', ', $uses) . ')' : '')
+			. ($this->uses ? " use ($useStr)" : '')
 			. $this->returnTypeToString()
 			. " {\n" . Nette\Utils\Strings::indent(ltrim(rtrim($this->body) . "\n"), 1) . '}';
 	}
@@ -57,6 +61,11 @@ class Closure
 	 */
 	public function setUses(array $uses)
 	{
+		foreach ($uses as $use) {
+			if (!$use instanceof Parameter) {
+				throw new Nette\InvalidArgumentException('Argument must be Nette\PhpGenerator\Parameter[].');
+			}
+		}
 		$this->uses = $uses;
 		return $this;
 	}
@@ -78,5 +87,4 @@ class Closure
 	{
 		return $this->uses[] = new Parameter($name);
 	}
-
 }

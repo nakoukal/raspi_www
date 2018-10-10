@@ -28,32 +28,42 @@ class TimetempPresenter extends BasePresenter
 	
 	public function renderHours()
 	{
-		$by = array('sensorID'=>'100000000001','day'=>1);
-		$this->template->hours = $this->TimetempRepository->GetHoursBy($by);
+		//$by = array('sensorID'=>'100000000001','day'=>1);				
+		$this->template->hours = $this->TimetempRepository->GetHoursBy($this->by);
 	}
 	
-	function actionDefault($sensorID,$day)
+	function actionHours($sensorID,$day)
 	{
-		$this->by = array('sensorID'=>$sensorID,'day'=>$day);
+		$this->by = array('sensorID'=>$sensorID);		
 	}
 	
-	protected function createComponentSensorsForm()
-    {
-		$dayOfWeek=array('1'=>'Po','2'=>'Ut');
-        $form = new UI\Form;
-        $form->addText('sensorID');
-        $form->addSelect('day','den',$dayOfWeek);
-        $form->addSubmit('send', 'Ulozit');
-        $form->onSuccess[] = [$this, 'sensorsFormSucceeded'];
+	protected function createComponentTempForm()
+    {		
+        $form = new UI\Form;		
+        $form->addCheckboxList('toedit');		
+        $form->addHidden('sensorID');
+		$form->addSubmit('plus', '+ 0.5')->onClick[] = [$this,'processForm1'];
+		$form->addSubmit('minus', '- 0.5')->onClick[] = [$this,'processForm2'];        
         return $form;
     }
 	
-	public function SensorsFormSucceeded(UI\Form $form)
-    {
-		$this->by = $form->getValues();
-        $this->flashMessage('Byl jste úspěšně registrován.');
-		$this->redirect('Timetemp:hours');
-    }
+	public function processForm1(\Nette\Forms\Controls\SubmitButton $button)
+	{
+		$form = $button->getForm();        
+        $values = $form->getHttpData($form::DATA_TEXT, 'sel[]');		
+		$this->TimetempRepository->IncreaseTemp($values);
+		//$this->flashMessage('Byl jste úspěšně registrován.');
+		$this->redirect('Timetemp:hours',$this->by);	
+	}
+	
+		public function processForm2(\Nette\Forms\Controls\SubmitButton $button)
+	{				
+        $form = $button->getForm();        
+        $values = $form->getHttpData($form::DATA_TEXT, 'sel[]');		
+		$this->TimetempRepository->DegreaseTemp($values);
+        //$this->flashMessage('Byl jste úspěšně registrován.');
+		$this->redirect('Timetemp:hours',$this->by);
+	}
 	
 	
 }
