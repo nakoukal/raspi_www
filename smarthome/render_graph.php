@@ -23,7 +23,7 @@ $oMySQL = new MySQL('temperature', $GLOBALS["dblogin"], $GLOBALS["dbpwd"], $GLOB
 
 $LibPath = __DIR__.'/pChart/';
 $Graphwidth = 500;
-$Graphheigth = 250;
+$Graphheigth = 255;
 
 $myData = new pData();
 $myData->loadPalette($LibPath."palettes/psma.color", TRUE);
@@ -60,7 +60,7 @@ foreach ($oMySQL->arrayedResult as $row) {
 	
 	switch($Type){
 	case "day":
-		$time = date('h:m',$row["unixtime"]);
+		$time = date('H:i',$row["unixtime"]);
 		break;
 	case "week":
 		$time = date('d.m.',$row["unixtime"]);
