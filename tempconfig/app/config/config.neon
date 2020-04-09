@@ -32,7 +32,8 @@ services:
 	authenticator: MyAuthenticator	
 	sensorsRepository: Temp\SensorsRepository
 	timetempRepository: Temp\TimetempRepository
-	relremoteRepository: Temp\RelremoteRepository			
+	relremoteRepository: Temp\RelremoteRepository
+	speedRepository: Temp\SpeedRepository			
 	#router: App\RouterFactory::createRouter
 	router: Nette\Application\Routers\SimpleRouter('Relremote:default')
 

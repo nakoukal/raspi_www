@@ -76,7 +76,7 @@ function GetColor($temperature,$limits_pos,$limits_neg){
 	$temp =  ($temperature - $limits_neg);
 	$tempProc = 100/$limits*$temp;
 	$colorNumber = round(count($colorArray)/100*$tempProc);
-	if(sizeof($colorNumber)<=$colorNumber)
+	if(sizeof($colorArray)>$colorNumber && sizeof($colorNumber)<=$colorNumber)
 		return $colorArray[$colorNumber];
 	else
 		return $colorArray[0];

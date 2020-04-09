@@ -14,6 +14,7 @@
 {/first}
 {form categoryForm}
 	<input n:name=sensorID value='{$sensor->sensorID}'>
+	<input n:name=releay_number value='{$sensor->releay_number}'>
     <tr {if $sensor->state_actual} style='background:green;'{/if}>
 		<td>{$sensor->name}</td>		
 		<td>{$sensor->act_temp}</td>

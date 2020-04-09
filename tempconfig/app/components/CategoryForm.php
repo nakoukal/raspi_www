@@ -20,7 +20,8 @@ class CategoryForm
     {
         $form = new UI\Form;
         // mohu použít $this->database
-		$form->addHidden('sensorID');
+        $form->addHidden('sensorID');
+        $form->addHidden('releay_number');
 		$form->addInteger('state')->addRule($form::RANGE, 'Úroveň musí být v rozsahu mezi %d a %d.', [0,1])->setRequired(true);
         $form->addText('date')->setType('datetime-local');
 		$form->addSubmit('plus', 'Save')->onClick[] = [$this,'processForm1'];		
@@ -31,7 +32,7 @@ class CategoryForm
 	{		
 		$form = $button->getForm();
 		$values = $form->getValues();		
-		$this->database->query('update rel_remote set state_extra='.$values['state'].' , state_extra_time="'.$values['date'].'" where sensorID="'.$values['sensorID'].'"');				
+		$this->database->query('update rel_remote set state_extra='.$values['state'].' , state_extra_time="'.$values['date'].'" where sensorID="'.$values['sensorID'].'" and releay_number="'.$values['releay_number'].'"');				
 	}
 	
 }

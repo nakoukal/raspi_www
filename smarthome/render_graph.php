@@ -90,7 +90,7 @@ $myPicture->drawFilledRectangle(0,0,$Graphwidth,$Graphheigth,$Settings);
 $myPicture->drawRectangle(0,0,$Graphwidth,$Graphheigth,array("R"=>0,"G"=>0,"B"=>0));
 $myPicture->drawRectangle(0,0,$Graphwidth-1,$Graphheigth-1,array("R"=>0,"G"=>0,"B"=>0)); 
 $myPicture->setShadow(FALSE);
-$myPicture->setGraphArea(50,30,$Graphwidth-70,$Graphheigth-40);
+$myPicture->setGraphArea(50,30,$Graphwidth-70,$Graphheigth-45);
 
 $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>50,"G"=>50,"B"=>50,"Alpha"=>20));
 $myPicture->setFontProperties(array("FontName"=>$LibPath."fonts/verdana.ttf","FontSize"=>8));

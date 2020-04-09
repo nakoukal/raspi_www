@@ -14,10 +14,7 @@
 
 namespace Temp;
 
-class SensorsRepository extends Repository{
-	public function GetCompletInfo()
-	{
-		
-	}
+class SpeedRepository extends Repository{
+
 	
 }
